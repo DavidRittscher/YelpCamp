@@ -39,7 +39,9 @@ const userRoutes = require('./routes/users');
 mongoose.set('strictQuery', false);
 
 const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
-mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+const db = mongoose.connection
+
+mongoose.connect(dbUrl)
     .then(() => {
         console.log("Mongo Connection Open")
     })
@@ -48,7 +50,6 @@ mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
         console.log(error);
     })
 
-const db = mongoose.connection
 
 const app = express();
 app.engine('ejs', ejsMate)
