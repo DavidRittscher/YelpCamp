@@ -39,16 +39,13 @@ const userRoutes = require('./routes/users');
 mongoose.set('strictQuery', false);
 
 const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
-const db = mongoose.connection
 
 mongoose.connect(dbUrl)
-    .then(() => {
-        console.log("Mongo Connection Open")
-    })
-    .catch(error => {
-        console.log('Oh no an Error NO MONGO');
-        console.log(error);
-    })
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", () => {
+    console.log("Database connected");
+});
 
 
 const app = express();
@@ -60,61 +57,6 @@ app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 app.use(express.static(path.join(__dirname, 'public')))
 
-// app.use(helmet());
-
-
-// const scriptSrcUrls = [
-//     "https://stackpath.bootstrapcdn.com",
-//     "https://api.tiles.mapbox.com",
-//     "https://api.mapbox.com",
-//     "https://kit.fontawesome.com",
-//     "https://cdnjs.cloudflare.com",
-//     "https://cdn.jsdelivr.net",
-//    " https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css"
-// ];
-// const styleSrcUrls = [
-//     "https://kit-free.fontawesome.com",
-//     "https://stackpath.bootstrapcdn.com",
-//     "https://api.mapbox.com",
-//     "https://api.tiles.mapbox.com",
-//     "https://fonts.googleapis.com",
-//     "https://use.fontawesome.com",
-//     "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css",
-//     "https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css",
-// ];
-// const connectSrcUrls = [
-//     "https://api.mapbox.com",
-//     "https://*.tiles.mapbox.com",
-//     "https://events.mapbox.com",
-//     "https://api.mapbox.com",
-//     "https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css",
-//     "http://localhost:3000/javascripts/clusterMap.js",
-// ];
-// const fontSrcUrls = [];
-// app.use(
-//     helmet.contentSecurityPolicy({
-//         directives: {
-//             defaultSrc: [],
-//             connectSrc: ["'self'", ...connectSrcUrls],
-//             scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
-//             styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
-
-//             childSrc: ["blob:"],
-//             objectSrc: [],
-//             imgSrc: [
-//                 "'self'",
-//                 "blob:",
-//                 "data:",
-//                 "https://res.cloudinary.com/diasx2emf/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT! 
-//                 "https://images.unsplash.com",
-//                 "https://api.mapbox.com",
-//                 "https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css"
-//             ],
-//             fontSrc: ["'self'", ...fontSrcUrls],
-//             upgradeInsecureRequests:[],
-//         },
-//     })
-// );
 
 app.use(mongoSanitize())
 const secret = process.env.SECRET || 'thisshouldbeabettersecret!';
