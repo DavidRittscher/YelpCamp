@@ -1,9 +1,4 @@
-const express = require('express')
-const router = express.Router()
-const passport = require('passport');
-
-const User = require('../models/user')
-const flash = require('connect-flash');
+const User = require('../models/user');
 
 module.exports.renderRegister = (req, res) => {
     res.render('users/register')

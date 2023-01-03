@@ -1,5 +1,6 @@
 const BaseJoi = require('joi')
 const sanitizeHTML = require('sanitize-html')
+
 const extension = (joi) => ({
     type: 'string',
     base: joi.string(),
@@ -23,26 +24,19 @@ const extension = (joi) => ({
 
 const Joi = BaseJoi.extend(extension)
 
-const campgroundSchema =
-    module.exports.campgroundSchema = Joi.object({
-        campground: Joi.object({
-            title: Joi.string().required().escapeHTML(),
-            price: Joi.number().required().min(0),
-            // image: Joi.string().required(),
-            location: Joi.string().required().escapeHTML(),
-            description: Joi.string().required().escapeHTML()
-        }).required(),
-        deleteImages: Joi.array()
+module.exports.campgroundSchema = Joi.object({
+    campground: Joi.object({
+        title: Joi.string().required().escapeHTML(),
+        price: Joi.number().required().min(0),
+        location: Joi.string().required().escapeHTML(),
+        description: Joi.string().required().escapeHTML()
+    }).required(),
+    deleteImages: Joi.array()
+});
 
-
-    });
-
-const reviewSchema =
-    module.exports.reviewSchema = Joi.object({
-        review: Joi.object({
-            rating: Joi.number().required().max(5).min(1),
-            body: Joi.string().required().escapeHTML()
-
-        }).required()
-    });
-
+module.exports.reviewSchema = Joi.object({
+    review: Joi.object({
+        rating: Joi.number().required().min(1).max(5),
+        body: Joi.string().required().escapeHTML()
+    }).required()
+})

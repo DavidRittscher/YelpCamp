@@ -1,7 +1,6 @@
 const Campground = require('../models/campground')
 const Review = require('../models/review');
-const AppError = require('../utils/AppError');
-const wrapAsync = require('../utils/wrapAsync');
+
 module.exports.createReview = async (req, res, next) => {
     const { id } = req.params;
     const campground = await Campground.findById(id);

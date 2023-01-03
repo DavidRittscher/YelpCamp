@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const AppError = require('../utils/AppError').default;
 const wrapAsync = require('../utils/wrapAsync');
-const Review = require('../models/review');
 const campgrounds = require('../controller/campgrounds')
 const { isLoggedIn, isAuthor, validateCampground } = require('../middleware');
 const multer = require('multer')

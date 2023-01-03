@@ -5,7 +5,10 @@ const mapBoxToken = process.env.MAPBOX_TOKEN;
 const geocoder = mbxGeocoding({ accessToken: mapBoxToken })
 
 module.exports.index = async (req, res, next) => {
-    const campgrounds = await Campground.find({});
+    const campgrounds = await Campground.find({}).populate({
+        path: 'popupText',
+        strictPopulate: false,
+    });
     res.render('campgrounds/index', { campgrounds })
 }
 
@@ -19,9 +22,10 @@ module.exports.createCampground = async (req, res, next) => {
     }).send()
     const campground = new Campground(req.body.campground);
     campground.geometry = geoData.body.features[0].geometry;
-    campground.images = req.files.map(f => ({ url: f.path, filename: f.filename }))
-    campground.author = req.user._id
+    campground.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
+    campground.author = req.user._id;
     await campground.save();
+    console.log(campground);
     req.flash('success', 'Successfully made a new campground!')
     res.redirect(`/campgrounds/${campground._id}`);
 
@@ -49,22 +53,23 @@ module.exports.renderEditCampground = async (req, res, next) => {
     }
     res.render('campgrounds/edit', { campground });
 }
-module.exports.updateCampground = async (req, res, next) => {
+module.exports.updateCampground = async (req, res) => {
     const { id } = req.params;
-    console.log(req.body)
+    console.log(req.body);
     const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
     const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }));
+	console.log('campground updated')
     campground.images.push(...imgs);
     await campground.save();
+
     if (req.body.deleteImages) {
         for (let filename of req.body.deleteImages) {
-            await cloudinary.uploader.destroy(filename)
+            await cloudinary.uploader.destroy(filename);
         }
         await campground.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } } })
-        console.log(campground)
     }
-    req.flash('success', 'Campground has been edited!')
-    res.redirect(`/campgrounds/${campground._id}`);
+    req.flash('success', 'Successfully updated campground!');
+    res.redirect(`/campgrounds/${campground._id}`)
 
 }
 module.exports.destroyCampground = async (req, res) => {
