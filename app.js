@@ -2,8 +2,6 @@ if (process.env.NODE_ENV !== "production") {
     require('dotenv').config();
 }
 
-
-// console.log(process.env.NODE_ENV.CLOUDINARY_SECRET)
 const express = require('express');
 const session = require('express-session');
 
@@ -19,7 +17,6 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 const mongoSanitize = require('express-mongo-sanitize')
-// const helmet = require('helmet')
 
 
 const campgroundRoutes = require('./routes/campgrounds');
@@ -27,26 +24,29 @@ const reviewRoutes = require('./routes/reviews');
 const userRoutes = require('./routes/users');
 
 
-
-
-
-
-
-// const { join } = require('path');
-// const campground = require('./models/campground');
-// const dbUrl = process.env.DB_URL
-
 mongoose.set('strictQuery', false);
 
 const dbUrl = process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
 
-mongoose.connect(dbUrl)
+
+mongoose.connect(dbUrl);
+
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
     console.log("Database connected");
 });
 
+// mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+//     .then(() => {
+//         console.log("Mongo Connection Open")
+//     })
+//     .catch(error => {
+//         console.log('Oh no an Error NO MONGO');
+//         console.log(error);
+//     })
+
+// const db = mongoose.connection
 
 const app = express();
 app.engine('ejs', ejsMate)
@@ -64,7 +64,7 @@ const secret = process.env.SECRET || 'thisshouldbeabettersecret!';
 
 const MongoStore = require('connect-mongo');
 
-const store =  MongoStore.create({
+const store = MongoStore.create({
     mongoUrl: dbUrl,
     secret,
     touchAfter: 24 * 60 * 60
@@ -123,7 +123,7 @@ app.all('*', (req, res, next) => {
 })
 // Error Message NExt
 app.use((err, req, res, next) => {
-    const { status = 500, } = err;
+    const { status = 500 } = err;
     if (!err.message) err.message = "Oh No! Something went wrong!"
     res.status(status).render('error', { err })
 })
