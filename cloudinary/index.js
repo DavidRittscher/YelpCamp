@@ -8,7 +8,7 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_SECRET
 });
 const storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
+    cloudinary,
     params: {
         folder: 'YelpCamp',
         allowedFormats: ['jpeg', 'png', 'jpg']
@@ -17,5 +17,5 @@ const storage = new CloudinaryStorage({
 
 module.exports = {
     cloudinary,
-    storage
+    storage,
 }
